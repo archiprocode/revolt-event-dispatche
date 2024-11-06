@@ -40,5 +40,8 @@
             "@test"
         ]
     },
-    "license": "MIT"
+    "license": "MIT",
+    "provide": {
+        "psr/event-dispatcher-implementation": "1.0"
+    }
 }
