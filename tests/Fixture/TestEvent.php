@@ -19,5 +19,6 @@ class TestEvent extends AbstractEvent
      */
     public function __construct(
         public readonly string $data
-    ) {}
-} 
+    ) {
+    }
+}

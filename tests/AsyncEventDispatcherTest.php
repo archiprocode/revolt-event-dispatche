@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ArchiPro\EventDispatcher\Tests;
 
-use PHPUnit\Framework\TestCase;
 use ArchiPro\EventDispatcher\AsyncEventDispatcher;
 use ArchiPro\EventDispatcher\ListenerProvider;
 use ArchiPro\EventDispatcher\Tests\Fixture\TestEvent;
+use PHPUnit\Framework\TestCase;
 use Revolt\EventLoop;
 
 /**
@@ -17,7 +17,7 @@ use Revolt\EventLoop;
  * - Multiple listener execution
  * - Event propagation stopping
  * - Handling events with no listeners
- * 
+ *
  * @covers \ArchiPro\EventDispatcher\AsyncEventDispatcher
  */
 class AsyncEventDispatcherTest extends TestCase
@@ -46,21 +46,21 @@ class AsyncEventDispatcherTest extends TestCase
     {
         $results = [];
         $completed = false;
-        
+
         $this->listenerProvider->addListener(TestEvent::class, function (TestEvent $event) use (&$results) {
-            EventLoop::delay(0.1, fn() => null);
+            EventLoop::delay(0.1, fn () => null);
             $results[] = 'listener1: ' . $event->data;
         });
 
         $this->listenerProvider->addListener(TestEvent::class, function (TestEvent $event) use (&$results, &$completed) {
-            EventLoop::delay(0.05, fn() => null);
+            EventLoop::delay(0.05, fn () => null);
             $results[] = 'listener2: ' . $event->data;
             $completed = true;
         });
 
         $event = new TestEvent('test data');
         $this->dispatcher->dispatch($event);
-        
+
         // Verify immediate return
         $this->assertEmpty($results);
 
@@ -79,7 +79,7 @@ class AsyncEventDispatcherTest extends TestCase
     public function testSynchronousStoppableEvent(): void
     {
         $results = [];
-        
+
         $this->listenerProvider->addListener(TestEvent::class, function (TestEvent $event) use (&$results) {
             $results[] = 'listener1';
             $event->stopPropagation();
@@ -97,7 +97,6 @@ class AsyncEventDispatcherTest extends TestCase
         $this->assertEquals(['listener1'], $results);
     }
 
-
     /**
      * Tests handling of events with no registered listeners.
      */
@@ -114,7 +113,7 @@ class AsyncEventDispatcherTest extends TestCase
      */
     public function testDispatchesNonStoppableEvents(): void
     {
-        $event = new class() {
+        $event = new class () {
             public bool $called = false;
         };
 
@@ -132,4 +131,4 @@ class AsyncEventDispatcherTest extends TestCase
         $this->assertTrue($event->called, 'Listener should have been called for non-stoppable event');
     }
 
-} 
+}

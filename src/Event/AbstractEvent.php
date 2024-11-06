@@ -33,4 +33,4 @@ abstract class AbstractEvent implements StoppableEventInterface
     {
         $this->propagationStopped = true;
     }
-} 
+}

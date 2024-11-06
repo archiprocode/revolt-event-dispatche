@@ -38,4 +38,4 @@ class ListenerProvider implements ListenerProviderInterface
     {
         return $this->listeners[$event::class] ?? [];
     }
-} 
+}

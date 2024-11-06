@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ArchiPro\EventDispatcher;
 
+use function Amp\async;
+
+use Amp\Pipeline\Queue;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
-use Revolt\EventLoop;
-use Amp\Pipeline\Queue;
 
-use function Amp\async;
+use Revolt\EventLoop;
 
 /**
  * Asynchronous implementation of PSR-14 EventDispatcherInterface using Revolt and AMPHP.
@@ -49,7 +50,7 @@ class AsyncEventDispatcher implements EventDispatcherInterface
         if ($event instanceof StoppableEventInterface) {
             return $this->dispatchStoppableEvent($event, $listeners);
         }
-        
+
         return $this->dispatchNonStoppableEvent($event, $listeners);
     }
 
@@ -63,7 +64,7 @@ class AsyncEventDispatcher implements EventDispatcherInterface
      */
     private function dispatchStoppableEvent(StoppableEventInterface $event, iterable $listeners): StoppableEventInterface
     {
-        async(function() use ($event, $listeners): void {
+        async(function () use ($event, $listeners): void {
             foreach ($listeners as $listener) {
                 $listener($event);
                 if ($event->isPropagationStopped()) {
@@ -78,7 +79,7 @@ class AsyncEventDispatcher implements EventDispatcherInterface
     /**
      * Dispatches a non-stoppable event to listeners asynchronously.
      * Simply queues all listeners in the event loop.
-     * 
+     *
      * Because we don't need to worry about stopping propagation, we can simply
      * queue all listeners in the event loop and let them run whenever in any order.
      *
@@ -89,7 +90,7 @@ class AsyncEventDispatcher implements EventDispatcherInterface
     private function dispatchNonStoppableEvent(object $event, iterable $listeners): object
     {
         foreach ($listeners as $listener) {
-            EventLoop::queue(function() use ($event, $listener) {
+            EventLoop::queue(function () use ($event, $listener) {
                 $listener($event);
             });
         }
@@ -97,6 +98,4 @@ class AsyncEventDispatcher implements EventDispatcherInterface
         return $event;
     }
 
-
-    
-} 
+}
