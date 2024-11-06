@@ -6,4 +6,3 @@ parameters:
         - examples
     tmpDir: phpstan.cache
     checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false 

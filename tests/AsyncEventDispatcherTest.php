@@ -112,19 +112,20 @@ class AsyncEventDispatcherTest extends TestCase
     /**
      * @test
      */
-    public function dispatchesNonStoppableEvents(): void
+    public function testDispatchesNonStoppableEvents(): void
     {
         $event = new class() {
-            public $called = false;
+            public bool $called = false;
         };
 
         $listener = function ($event) {
-            
             $event->called = true;
         };
 
         $this->listenerProvider->addListener(get_class($event), $listener);
         $this->dispatcher->dispatch($event);
+
+        $this->assertFalse($event->called, 'Listener should not have been called right away');
 
         EventLoop::run();
 
