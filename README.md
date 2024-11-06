@@ -1,5 +1,7 @@
 # PSR-14 Async Event Dispatcher (Experimental)
 
+[![CI](https://github.com/archipro/revolt-event-dispatcher/actions/workflows/ci.yml/badge.svg)](https://github.com/archipro/revolt-event-dispatcher/actions/workflows/ci.yml)
+
 A PSR-14 compatible event dispatcher implementation using Revolt and AMPHP for asynchronous event handling.
 
 ## Features
