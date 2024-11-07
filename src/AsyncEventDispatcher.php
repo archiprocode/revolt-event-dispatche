@@ -6,7 +6,6 @@ namespace ArchiPro\EventDispatcher;
 
 use function Amp\async;
 
-use Amp\Pipeline\Queue;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
