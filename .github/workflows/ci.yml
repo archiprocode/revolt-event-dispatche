@@ -2,9 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -52,4 +50,4 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Check coding standards
-        run: php-cs-fixer fix --dry-run --diff 
+        run: php-cs-fixer fix --dry-run --diff
