@@ -22,14 +22,22 @@ $listenerProvider = new ListenerProvider();
 
 $listenerProvider->addListener(UserCreatedEvent::class, function (UserCreatedEvent $event) {
     // Simulate async operation
-    EventLoop::delay(1, fn () => null);
-    echo "Sending welcome email to {$event->email}\n";
+    EventLoop::delay(
+        1,
+        function () use ($event) {
+            echo "Sending welcome email to {$event->email}\n";
+        }
+    );
 });
 
 $listenerProvider->addListener(UserCreatedEvent::class, function (UserCreatedEvent $event) {
     // Simulate async operation
-    EventLoop::delay(0.5, fn () => null);
-    echo "Logging user creation: {$event->userId}\n";
+    EventLoop::delay(
+        0.5,
+        function () use ($event) {
+            echo "Logging user creation: {$event->userId}\n";
+        }
+    );
 });
 
 // Create the event dispatcher

@@ -14,14 +14,18 @@ use Psr\EventDispatcher\ListenerProviderInterface;
  */
 class ListenerProvider implements ListenerProviderInterface
 {
-    /** @var array<string, array<callable>> */
+    /**
+     * @var array<class-string<T>, array<callable(T): void>>
+     * @template T of object
+     */
     private array $listeners = [];
 
     /**
      * Registers a listener for a specific event class.
      *
-     * @param string $eventClass The fully qualified class name of the event
-     * @param callable $listener The listener callback that will handle the event
+     * @template T of object
+     * @param class-string<T> $eventClass The fully qualified class name of the event
+     * @param callable(T): void $listener The listener callback that will handle the event
      */
     public function addListener(string $eventClass, callable $listener): void
     {
@@ -31,8 +35,9 @@ class ListenerProvider implements ListenerProviderInterface
     /**
      * Gets all listeners registered for the given event.
      *
-     * @param object $event The event to get listeners for
-     * @return iterable<callable> The registered listeners
+     * @template T of object
+     * @param T $event The event to get listeners for
+     * @return array<callable(T): void> The registered listeners
      */
     public function getListenersForEvent(object $event): iterable
     {

@@ -12,7 +12,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
  * Provides basic functionality for stopping event propagation. Events that need
  * propagation control should extend this class.
  */
-abstract class AbstractEvent implements StoppableEventInterface
+abstract class AbstractStoppableEvent implements StoppableEventInterface
 {
     private bool $propagationStopped = false;
 

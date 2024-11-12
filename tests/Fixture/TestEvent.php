@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ArchiPro\EventDispatcher\Tests\Fixture;
 
-use ArchiPro\EventDispatcher\Event\AbstractEvent;
+use ArchiPro\EventDispatcher\Event\AbstractStoppableEvent;
 
 /**
  * Simple event implementation for testing purposes.
@@ -12,7 +12,7 @@ use ArchiPro\EventDispatcher\Event\AbstractEvent;
  * Contains a single data property that can be used to verify event handling
  * in test cases.
  */
-class TestEvent extends AbstractEvent
+class TestEvent extends AbstractStoppableEvent
 {
     /**
      * @param string $data Test data to be carried by the event
