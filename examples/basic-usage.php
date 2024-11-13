@@ -2,6 +2,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Amp\TimeoutCancellation;
 use ArchiPro\EventDispatcher\AsyncEventDispatcher;
 use ArchiPro\EventDispatcher\Event\AbstractStoppableEvent;
 use ArchiPro\EventDispatcher\ListenerProvider;
@@ -47,5 +48,15 @@ $dispatcher = new AsyncEventDispatcher($listenerProvider);
 $event = new UserCreatedEvent('123', 'user@example.com');
 $dispatcher->dispatch($event);
 
-// Run the event loop
+// Run the event loop to process all events
+EventLoop::run();
+
+// Wait for the event to finish right away
+$event = new UserCreatedEvent('456', 'user@example.com');
+$future = $dispatcher->dispatch($event);
+$updatedEvent = $future->await();
+
+// Make an event cancellable
+$event = new UserCreatedEvent('789', 'user@example.com');
+$future = $dispatcher->dispatch($event, new TimeoutCancellation(30));
 EventLoop::run();
