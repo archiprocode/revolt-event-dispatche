@@ -40,7 +40,7 @@
             "@test"
         ]
     },
-    "license": "MIT",
+    "license": "BSD-3-Clause",
     "provide": {
         "psr/event-dispatcher-implementation": "1.0"
     }
