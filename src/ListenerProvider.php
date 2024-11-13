@@ -15,8 +15,7 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 class ListenerProvider implements ListenerProviderInterface
 {
     /**
-     * @var array<class-string<T>, array<callable(T): void>>
-     * @template T of object
+     * @var array<class-string, array<callable>>
      */
     private array $listeners = [];
 

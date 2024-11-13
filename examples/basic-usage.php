@@ -3,12 +3,12 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use ArchiPro\EventDispatcher\AsyncEventDispatcher;
-use ArchiPro\EventDispatcher\Event\AbstractEvent;
+use ArchiPro\EventDispatcher\Event\AbstractStoppableEvent;
 use ArchiPro\EventDispatcher\ListenerProvider;
 use Revolt\EventLoop;
 
 // Create a custom event
-class UserCreatedEvent extends AbstractEvent
+class UserCreatedEvent extends AbstractStoppableEvent
 {
     public function __construct(
         public readonly string $userId,

@@ -184,7 +184,7 @@ class AsyncEventDispatcherTest extends TestCase
 
         $cancellation = new TimeoutCancellation(0.05);
 
-        $this->expectException(CancelledException::class, 'Our listener should have been cancelled');
+        $this->expectException(CancelledException::class);
 
         $this->dispatcher->dispatch($event, $cancellation)->await();
     }
@@ -203,7 +203,7 @@ class AsyncEventDispatcherTest extends TestCase
 
         $cancellation = new TimeoutCancellation(0.05);
 
-        $this->expectException(CancelledException::class, 'Our listener should have been cancelled');
+        $this->expectException(CancelledException::class);
 
         $this->dispatcher->dispatch($event, $cancellation)->await();
     }

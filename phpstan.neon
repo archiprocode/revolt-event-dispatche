@@ -5,4 +5,3 @@ parameters:
         - tests
         - examples
     tmpDir: phpstan.cache
-    checkMissingIterableValueType: false
