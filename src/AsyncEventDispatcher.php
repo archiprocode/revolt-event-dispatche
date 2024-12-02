@@ -7,14 +7,17 @@ namespace ArchiPro\EventDispatcher;
 use function Amp\async;
 
 use Amp\Cancellation;
+
 use Amp\Future;
 
 use function Amp\Future\awaitAll;
 
 use Amp\NullCancellation;
+use Closure;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Throwable;
 
 /**
  * Asynchronous implementation of PSR-14 EventDispatcherInterface using Revolt and AMPHP.
@@ -24,12 +27,22 @@ use Psr\EventDispatcher\StoppableEventInterface;
  */
 class AsyncEventDispatcher implements EventDispatcherInterface
 {
+    /** @var Closure(Throwable): (void) */
+    private Closure $errorHandler;
+
     /**
      * @param ListenerProviderInterface $listenerProvider The provider of event listeners
+     * @param Closure(Throwable): (void) $errorHandler The handler for errors thrown by listeners
      */
     public function __construct(
-        private readonly ListenerProviderInterface $listenerProvider
+        private readonly ListenerProviderInterface $listenerProvider,
+        ?Closure $errorHandler = null
     ) {
+        if ($errorHandler === null) {
+            $this->errorHandler = function (Throwable $exception): void {};
+        } else {
+            $this->errorHandler = $errorHandler;
+        }
     }
 
     /**
@@ -85,7 +98,7 @@ class AsyncEventDispatcher implements EventDispatcherInterface
                 // that doesn't mean we want to block other listeners outside this loop.
                 $future = async(function () use ($event, $listener) {
                     $listener($event);
-                });
+                })->catch($this->errorHandler);
 
                 $future->await($cancellation);
 
@@ -120,14 +133,13 @@ class AsyncEventDispatcher implements EventDispatcherInterface
             foreach ($listeners as $listener) {
                 $futures[] = async(function () use ($event, $listener) {
                     $listener($event);
-                });
+                })->catch($this->errorHandler);
             }
 
-            // Wait for all listeners to complete
+            // Wait for all listeners to complete. This will carry on despite errors.
             awaitAll($futures, $cancellation);
 
             return $event;
         });
     }
-
 }
