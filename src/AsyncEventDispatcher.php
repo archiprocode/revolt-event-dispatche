@@ -32,16 +32,16 @@ class AsyncEventDispatcher implements EventDispatcherInterface
 
     /**
      * @param ListenerProviderInterface $listenerProvider The provider of event listeners
-     * @param Closure(Throwable): (void) $errorHandler The handler for errors thrown by listeners
+     * @param callable(Throwable): (void) $errorHandler The handler for errors thrown by listeners
      */
     public function __construct(
         private readonly ListenerProviderInterface $listenerProvider,
-        ?Closure $errorHandler = null
+        ?callable $errorHandler = null
     ) {
         if ($errorHandler === null) {
             $this->errorHandler = function (Throwable $exception): void {};
         } else {
-            $this->errorHandler = $errorHandler;
+            $this->errorHandler = Closure::fromCallable($errorHandler);
         }
     }
 
