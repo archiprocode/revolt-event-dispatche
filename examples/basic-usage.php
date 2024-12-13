@@ -60,3 +60,11 @@ $updatedEvent = $future->await();
 $event = new UserCreatedEvent('789', 'user@example.com');
 $future = $dispatcher->dispatch($event, new TimeoutCancellation(30));
 EventLoop::run();
+
+// Set up logging for your dispatcher - all errors will be logged to PSR logger
+$dispatcher = new AsyncEventDispatcher(
+    $listenerProvider,
+    function (Throwable $exception) {
+        error_log($exception->getMessage());
+    }
+);

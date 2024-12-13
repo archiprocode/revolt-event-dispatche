@@ -15,8 +15,6 @@ use ArchiPro\EventDispatcher\ListenerProvider;
 use ArchiPro\EventDispatcher\Tests\Fixture\TestEvent;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use Revolt\EventLoop;
-
 use Throwable;
 
 /**
@@ -34,18 +32,21 @@ class AsyncEventDispatcherTest extends TestCase
     private ListenerProvider $listenerProvider;
     private AsyncEventDispatcher $dispatcher;
 
+    /** @var array<Throwable> */
+    private array $errors = [];
+
     /**
      * Sets up the test environment before each test.
      */
     protected function setUp(): void
     {
         $this->listenerProvider = new ListenerProvider();
-        $this->dispatcher = new AsyncEventDispatcher($this->listenerProvider);
-
-        EventLoop::setErrorHandler(function (Throwable $err) {
-            throw $err;
-        });
-
+        $this->dispatcher = new AsyncEventDispatcher(
+            $this->listenerProvider,
+            function (Throwable $exception) {
+                $this->errors[] = $exception;
+            }
+        );
     }
 
     /**
@@ -80,6 +81,8 @@ class AsyncEventDispatcherTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertContains('listener1: test data', $results);
         $this->assertContains('listener2: test data', $results);
+
+        $this->assertCount(0, $this->errors, 'No errors are logged');
     }
 
     /**
@@ -103,6 +106,8 @@ class AsyncEventDispatcherTest extends TestCase
 
         $this->assertCount(1, $results);
         $this->assertEquals(['listener1'], $results);
+
+        $this->assertCount(0, $this->errors, 'No errors are logged');
     }
 
     /**
@@ -114,6 +119,7 @@ class AsyncEventDispatcherTest extends TestCase
         $dispatchedEvent = $this->dispatcher->dispatch($event);
 
         $this->assertSame($event, $dispatchedEvent->await());
+        $this->assertCount(0, $this->errors, 'No errors are logged');
     }
 
     /**
@@ -158,16 +164,18 @@ class AsyncEventDispatcherTest extends TestCase
 
         $futureEvent = $this->dispatcher->dispatch($event);
 
-        $futureEvent = $futureEvent->await();
+        $futureEvent->await();
 
         $this->assertTrue(
-            $futureEvent->calledOnce,
+            $event->calledOnce,
             'The first listener should have been called'
         );
         $this->assertTrue(
-            $futureEvent->calledTwice,
+            $event->calledTwice,
             'The second listener should have been called despite the failure of the first listener'
         );
+
+        $this->assertCount(2, $this->errors, 'Errors are caught for both listeners');
     }
 
     public function testCancellationOfStoppableEvent(): void
@@ -187,6 +195,8 @@ class AsyncEventDispatcherTest extends TestCase
         $this->expectException(CancelledException::class);
 
         $this->dispatcher->dispatch($event, $cancellation)->await();
+
+        $this->assertCount(0, $this->errors, 'No errors are caught');
     }
 
     public function testCancellationOfNonStoppableEvent(): void
@@ -206,6 +216,7 @@ class AsyncEventDispatcherTest extends TestCase
         $this->expectException(CancelledException::class);
 
         $this->dispatcher->dispatch($event, $cancellation)->await();
-    }
 
+        $this->assertCount(0, $this->errors, 'No errors are caught');
+    }
 }
